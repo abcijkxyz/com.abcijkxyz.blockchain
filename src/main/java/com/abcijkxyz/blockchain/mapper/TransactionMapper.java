@@ -12,8 +12,8 @@ public interface TransactionMapper {
 
 	@Insert("""
 
-			INSERT INTO "transaction"("hash", "time", "height", "address", "resultSQL", "ecosystem", "contract", "version", "txData")
-			VALUES(#{hash},#{time},#{height},#{address},#{resultSQL},#{ecosystem},#{contract},#{version},#{txData})
+			INSERT INTO "transaction"("hash", "time", "height", "address", "resultSQL", "ecosystem", "contract", "version", "data")
+			VALUES(#{hash},#{time},#{height},#{address},#{resultSQL},#{ecosystem},#{contract},#{version},#{data})
 
 			""")
 	int insert(Transaction transaction);

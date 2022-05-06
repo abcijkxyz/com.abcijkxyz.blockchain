@@ -13,8 +13,10 @@ public class SpentInfo {
 	private String outputAddress;
 
 	// 输出的余额
-	private Long outputValue;
-
+	private Long outputValue;  
+	//9000000000000000000L;
+	//9223372036854775807L Long.MAX_VALUE
+	
 	// 输出花费的交易
 	private String outputTxHash;
 

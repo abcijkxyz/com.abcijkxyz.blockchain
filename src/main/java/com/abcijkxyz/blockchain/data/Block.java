@@ -79,6 +79,7 @@ public class Block {
 			byte[][] txHashs = new byte[transactions.size()][];
 
 			for (int i = 0; i < transactions.size(); i++) {
+
 				txHashs[i] = Hex.decodeHex(transactions.get(i).getHash());
 			}
 
@@ -89,7 +90,7 @@ public class Block {
 
 			byte[] merkleRootHash = new MerkleTree(txHashs).getRoot().getHash();
 			block.setMerkleRoot(Hex.encodeHexString(merkleRootHash));
-			byte[] headers = ByteUtils.merge(Hex.decodeHex(block.getPrevBlockHash()), Hex.decodeHex(block.getMerkleRoot()), ByteUtils.toBytes(block.getTime()));
+			byte[] headers = ByteUtils.merge(block.getPrevBlockHash().getBytes(), block.getMerkleRoot().getBytes(), ByteUtils.toBytes(block.getTime()));
 			block.setHash(DigestUtils.sha256Hex(headers));
 		} catch (Exception e) {
 			e.printStackTrace();

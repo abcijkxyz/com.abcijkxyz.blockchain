@@ -14,26 +14,27 @@ public interface TxDataMapper {
 //	INSERT INTO "public"."tx_data"("hash", "from", "to", "amount", "timestamp", "contract", "data") VALUES ('1', '1', '1', 1, 1, '1', NULL);
 
 	@Insert("""
-			
+
 			INSERT INTO "tx_data" (hash,contract,"from","to",amount,timestamp) VALUES(#{hash},#{contract},#{from},#{to},#{amount},#{timestamp})
-			
+			ON CONFLICT ON CONSTRAINT t_tx_queue_pkey DO NOTHING
+
 			""")
 	void insert(TxData txQueue);
 
-	@Delete(""" 
-			
+	@Delete("""
+
 			DELETE FROM "tx_data"
-			
+
 			""")
 	void deleteAll();
 
 	@Select("""
-			
-			SELECT hash,contract,"from","to",amount,"timestamp" FROM "tx_data" ORDER BY "timestamp" asc LIMIT 100
-			
+
+			SELECT hash,contract,"from","to",amount,"timestamp" FROM "tx_data" ORDER BY "timestamp" asc LIMIT 2000
+
 			""")
 	List<TxData> getFirst100TxQueue();
-	
+
 	@Delete("""
 			<script>
 				DELETE FROM "tx_data"
@@ -45,4 +46,9 @@ public interface TxDataMapper {
 			</script>
 			""")
 	void deleteByHashs(List<String> hashs);
+
+	@Delete("""
+				DELETE FROM "tx_data" WHERE hash = #{hash}
+			""")
+	void delete(String hash);
 }

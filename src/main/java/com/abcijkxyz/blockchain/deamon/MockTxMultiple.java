@@ -1,7 +1,8 @@
-package com.abcijkxyz.blockchain.mock;
+package com.abcijkxyz.blockchain.deamon;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -21,9 +22,9 @@ import com.abcijkxyz.blockchain.mapper.SpentInfoMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
-//@Component
+@Component
 @Slf4j
-public class MockTx {
+public class MockTxMultiple {
 //	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	@Autowired
@@ -57,38 +58,41 @@ public class MockTx {
 	 */
 	@Scheduled(fixedRate = 1000)
 	public void mockTx() {
-		log.debug("start mockTx");
+//		log.debug("start mockTx");
 		try {
-			SpentInfo maxOutput = spentInfoMapper.getMaxTxOutputs();
-			if (maxOutput != null) {
-				String from = maxOutput.getOutputAddress();
-//				Long amount = maxOutput.getOutputValue();
-
-				int accountNum = accountMapper.countAll();
-				String to = null;
-				if (accountNum < 10) {
-					to = UUID.randomUUID().toString();
-				} else {
-					SpentInfo minOutput = spentInfoMapper.getMinTxOutputs();
-					to = minOutput.getOutputAddress();
+			List<SpentInfo> maxOutputs = spentInfoMapper.getMaxManyTxOutputs();
+			List<SpentInfo> minOutputs = spentInfoMapper.getMinManyTxOutputs();
+			int accountNum = accountMapper.countAll();
+			if (maxOutputs != null && minOutputs != null) {
+				for (int i = 0; i < maxOutputs.size(); i++) {
+					SpentInfo maxOutput = maxOutputs.get(i);
+					String from = maxOutput.getOutputAddress();
+					// Long amount = maxOutput.getOutputValue();
+					String to = null;
+					if (accountNum < 2000) {
+						to = UUID.randomUUID().toString();
+						accountMapper.insertOnlyAddress(to);
+						accountNum++;
+					} else {
+						SpentInfo minOutput = minOutputs.get(i);
+						to = minOutput.getOutputAddress();
+					}
+					Random random = new Random();
+					MessageBufferPacker packer = MessagePack.newDefaultBufferPacker();
+					packer.packString("Transfer")//
+							.packString(from)//
+							.packString(to)//
+							.packLong(1L)//
+							// .packLong(random.nextLong(10))//
+							.packLong(new Date().getTime());
+					packer.close();
+					String tx = Hex.encodeHexString(packer.toByteArray());
+					sendTx(tx);
 				}
-
-				Random random = new Random();
-				MessageBufferPacker packer = MessagePack.newDefaultBufferPacker();
-				packer.packString("Transfer")//
-						.packString(from)//
-						.packString(to)//
-						.packLong(random.nextLong(1L))//
-						.packLong(new Date().getTime());
-				packer.close();
-				String tx = Hex.encodeHexString(packer.toByteArray());
-				sendTx(tx);
-
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 //		log.debug("end mockTx");
 	}
 

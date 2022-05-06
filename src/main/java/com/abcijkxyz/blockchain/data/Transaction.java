@@ -40,6 +40,7 @@ public class Transaction {
 
 	// TODO 交易数据？ byte[] ,测试用 String json
 	private TxData txData;
+	private String data;
 
 	// 调用的合约名称
 	private String contract;
@@ -53,6 +54,7 @@ public class Transaction {
 	// TODO 合约执行完成之后，输出的SQL日志？ byte[] ,测试用 String json
 	private String resultSQL;
 
+	
 	public Transaction(Long height, String contract, String address, Long time, TxData txData) {
 		try {
 			MessageBufferPacker packer = MessagePack.newDefaultBufferPacker();
@@ -60,7 +62,9 @@ public class Transaction {
 //					.packString(txData)//
 					.packString(address)//
 					.packLong(height)//
-					.packLong(time);
+					.packLong(time)//
+					.packString(txData.toString());
+			
 			packer.close();
 			byte[] data = packer.toByteArray();
 //			this.data = Hex.encodeHexString(data) ;
@@ -74,6 +78,7 @@ public class Transaction {
 		this.address = address;
 		this.time = time;
 		this.txData = txData;
+		this.data = txData.toString();
 	}
 
 	public Transaction(Long height, String contract, String address, Long time, TxData txData, List<SpentInfo> txInputs, List<SpentInfo> txOutputs) {
@@ -83,7 +88,8 @@ public class Transaction {
 //					.packString(txData)//
 					.packString(address)//
 					.packLong(height)//
-					.packLong(time);
+					.packLong(time)//
+					.packString(txData.toString());
 			packer.close();
 			byte[] data = packer.toByteArray();
 //			this.data = Hex.encodeHexString(data) ;
@@ -100,6 +106,7 @@ public class Transaction {
 		this.address = address;
 		this.time = time;
 		this.txData = txData;
+		this.data = txData.toString();
 	}
 
 	/**
@@ -129,6 +136,10 @@ public class Transaction {
 //		txOutputs.add(txOutput);
 		tx.setTxOutputs(txOutputs);
 		return tx;
+	}
+
+	public Transaction(TxData txData) {
+		this.txData = txData;
 	}
 
 }

@@ -10,7 +10,7 @@ public class Example2 implements SmartContract {
 	}
 
 	public String action() {
-		System.out.println("Example2 action ");
+	//	System.out.println("Example2 action ");
 		return "Hello World !";
 	}
 }

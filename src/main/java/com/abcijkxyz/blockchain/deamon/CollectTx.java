@@ -12,15 +12,13 @@ import com.abcijkxyz.blockchain.mapper.TxDataMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
-//@Component
+@Component
 @Slf4j
 public class CollectTx {
 
-	
 	@Autowired
 	private TxDataMapper queueMapper;
 
-	
 	/**
 	 * Collecting real-time transactions
 	 * 
@@ -28,8 +26,8 @@ public class CollectTx {
 	 */
 	@KafkaListener(topics = "MockTransaction", groupId = "group_id")
 	public void collectTx(String tx) {
-		log.debug("start collectTx");
-		log.debug("collectTx\t" + tx);
+//		log.debug("start collectTx");
+//		log.debug("collectTx\t" + tx);
 
 		try {
 			byte[] packer = Hex.decodeHex(tx);
@@ -40,11 +38,10 @@ public class CollectTx {
 			Long amount = unpacker.unpackLong();
 			Long timestamp = unpacker.unpackLong();
 			unpacker.close();
-			log.debug("contract[{}],from[{}],to[{}],amount[{}],timestamp[{}]", contract, from, to, amount, timestamp);
+//			log.debug("contract[{}],from[{}],to[{}],amount[{}],timestamp[{}]", contract, from, to, amount, timestamp);
 
 			queueMapper.insert(new TxData(contract, from, to, amount, timestamp));
-			
-			
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

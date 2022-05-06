@@ -59,12 +59,9 @@ public class GenerateBlocks {
 
 	@Autowired
 	private TransactionMapper transactionMapper;
-	
-	
 
 	@Autowired
 	private SmartVM smartVM;
-
 
 	@Scheduled(fixedRate = 4000)
 	@Transactional
@@ -80,7 +77,7 @@ public class GenerateBlocks {
 		// TODO 交易分组
 		Map<Integer, List<TxData>> groupMap = groupTxs(list);
 
-		System.out.println("groupMap:" + groupMap);
+	//	System.out.println("groupMap:" + groupMap);
 
 		Long height = 0L;
 		String prevBlockHash = ByteUtils.ZERO_HASH;
@@ -274,7 +271,7 @@ public class GenerateBlocks {
 				}
 				it.remove();
 			}
-			System.out.println("--------------Execute transactions in parallel-----------------");
+	//		System.out.println("--------------Execute transactions in parallel-----------------");
 
 			CountDownLatch countDownLatch = new CountDownLatch(size);
 			excuGroupMap.forEach((key, value) -> {
@@ -326,7 +323,7 @@ public class GenerateBlocks {
 		// TODO 输入 TxInput
 		List<SpentInfo> txInputs = spentInfoMapper.findTxOutput(from);
 		if (txInputs != null) {
-			List<TxOutput> txoutput = null;
+//			List<TxOutput> txoutput = null;
 			switch (contract) {
 			case "Coinbase":
 //				Coinbase(txData, txInputs, height);
@@ -339,8 +336,9 @@ public class GenerateBlocks {
 //				Example(txData, txInputs, height);
 				break;
 			default:
+//				return null;
 				break;
-			}
+			} 
 
 //			ctx
 			// gas
@@ -348,14 +346,13 @@ public class GenerateBlocks {
 			Context context = ContextUtil.getContext();
 			List<SpentInfo> txInputs_ctx = context.getTxInputs();
 			List<SpentInfo> txOutputs_ctx = context.getTxOutputs();
-			
-			
-			Transaction transaction=new Transaction(height, contract, from, System.currentTimeMillis(), txData, txInputs_ctx, txOutputs_ctx);
+
+			Transaction transaction = new Transaction(height, contract, from, System.currentTimeMillis(), txData, txInputs_ctx, txOutputs_ctx);
 			transactionMapper.insert(transaction);
 
 			spentInfoMapper.updateTxInputs(transaction.getHash(), txInputs_ctx);
-			
-			spentInfoMapper.insertTxOutputs(transaction.getHash(), txOutputs_ctx);
+
+			spentInfoMapper.insertTxOutputs(transaction.getHash(),height, txOutputs_ctx);
 			// sql= execSQL(output)
 
 		}
@@ -373,23 +370,21 @@ public class GenerateBlocks {
 	// 合约 转账
 //	private Transaction Transfer(TxData txData, List<SpentInfo> txInputs, Long height) {
 
-		// TODO 处理 / 输出 TxOutput
-		// 给一个用户转账
+	// TODO 处理 / 输出 TxOutput
+	// 给一个用户转账
 //		TransferHelper.singleTransfer(txData, txInputs, height);
-		// 给多个用户转账
-		// MultipleTransfer
-		// ctx
+	// 给多个用户转账
+	// MultipleTransfer
+	// ctx
 
 //		return null;
 
 //	}
 
-
-
 	// 合约 样例
 //	private Transaction Example(TxData txData, List<SpentInfo> txInputs, Long height) {
 
-		// sql Example table
+	// sql Example table
 
 //		return null;
 
