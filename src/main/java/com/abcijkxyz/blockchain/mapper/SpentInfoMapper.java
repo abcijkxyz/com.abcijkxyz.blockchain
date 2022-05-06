@@ -38,8 +38,8 @@ public interface SpentInfoMapper {
 			<script>
 
 			UPDATE spent_info set "inputTxHash"=t."inputTxHash","inputIndex"=t."inputIndex" from (VALUES
-				<foreach collection="list" item="item" index="inputIndex" separator=",">
-					(#{inputTxHash},#{inputIndex},#{item.outputTxHash},#{item.outputAddress},#{item.outputIndex})
+				<foreach collection="list" item="item" index="" separator=",">
+					(#{inputTxHash},#{item.inputIndex},#{item.outputTxHash},#{item.outputAddress},#{item.outputIndex})
 				</foreach>
 			) as t ("inputTxHash","inputIndex","outputTxHash","outputAddress","outputIndex")
 			WHERE
@@ -80,23 +80,28 @@ public interface SpentInfoMapper {
 
 	// 可花费的输出
 	@Select("""
-
 			SELECT
-				"inputTxHash",
-				"inputIndex",
-				"inputPublicKey",
-				"outputTxHash",
-				"outputIndex",
-				"outputAddress",
-				"outputValue",
-				scene,
-				ecosystem,
-				contract,
-				height,
-				asset
+				si."inputTxHash",
+			ROW_NUMBER() OVER() -1 as "inputIndex",
+				si."inputPublicKey",
+				si."outputTxHash",
+				si."outputIndex",
+				si."outputAddress",
+				si."outputValue",
+				si.scene,
+				si.ecosystem,
+				si.contract,
+				si.height,
+				si.asset
 			FROM
-				spent_info
-			WHERE "outputAddress" = #{address} AND "inputTxHash" IS NULL
+				spent_info AS si
+				LEFT JOIN "transaction" AS tr ON si."outputTxHash" = tr.hash
+			WHERE
+				si."outputAddress" = #{address}
+				AND si."inputTxHash" IS NULL
+			ORDER BY
+				si.height ASC,
+				tr."time" ASC
 
 			""")
 	List<SpentInfo> findTxOutput(String address);
@@ -105,11 +110,11 @@ public interface SpentInfoMapper {
 	@Select("""
 
 			SELECT "outputAddress",SUM ("outputValue") AS "outputValue" FROM spent_info
-			
+
 			WHERE "inputTxHash" IS NULL    GROUP BY "outputAddress"  HAVING SUM ("outputValue") >1000 ORDER BY  "outputValue"  DESC LIMIT 1
 
 			""")
-	 SpentInfo getMaxOneTxOutputs();
+	SpentInfo getMaxOneTxOutputs();
 
 	// 用来模拟交易，接收转账的账号
 	@Select("""
@@ -130,8 +135,7 @@ public interface SpentInfoMapper {
 	@Select("""
 
 			SELECT "outputAddress",SUM ("outputValue") AS "outputValue" FROM spent_info
-			
-			WHERE "inputTxHash" IS NULL    GROUP BY "outputAddress"  HAVING SUM ("outputValue") >10000 ORDER BY  "outputValue"  DESC LIMIT 1000
+			WHERE "inputTxHash" IS NULL    GROUP BY "outputAddress"  HAVING SUM ("outputValue") >1000 ORDER BY  "outputValue"  DESC LIMIT 500
 
 			""")
 	List<SpentInfo> getMaxManyTxOutputs();
@@ -139,15 +143,20 @@ public interface SpentInfoMapper {
 	@Select("""
 
 			SELECT "account".address AS "outputAddress",( CASE WHEN outputs."outputValue" > 0 THEN outputs."outputValue" ELSE 0 END ) "outputValue"
-
 			FROM "account"
-
 			LEFT JOIN ( SELECT "outputAddress", SUM ( "outputValue" ) AS "outputValue" FROM spent_info
-
 			WHERE "inputTxHash" IS NULL GROUP BY "outputAddress" ) outputs ON outputs."outputAddress" = "account".address
-
-			ORDER BY "outputValue" ASC LIMIT 1000
+			ORDER BY "outputValue" ASC LIMIT 500
 
 			""")
 	List<SpentInfo> getMinManyTxOutputs();
+
+	
+	// 总余额
+	@Select("""
+
+			SELECT SUM("outputValue") FROM "spent_info" WHERE "inputTxHash" IS NULL
+
+			""")
+	Long getTotalTxOutputs();
 }

@@ -1,10 +1,10 @@
-package com.abcijkxyz.blockchain.deamon;
+package com.abcijkxyz.blockchain.mock;
 
 import org.apache.commons.codec.binary.Hex;
 import org.msgpack.core.MessagePack;
 import org.msgpack.core.MessageUnpacker;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.annotation.KafkaListener;
+//import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 import com.abcijkxyz.blockchain.client.TxData;
@@ -12,7 +12,7 @@ import com.abcijkxyz.blockchain.mapper.TxDataMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Component
+//@Component
 @Slf4j
 public class CollectTx {
 
@@ -24,7 +24,7 @@ public class CollectTx {
 	 * 
 	 * @param tx
 	 */
-	@KafkaListener(topics = "MockTransaction", groupId = "group_id")
+//	@KafkaListener(topics = "MockTransaction", groupId = "group_id")
 	public void collectTx(String tx) {
 //		log.debug("start collectTx");
 //		log.debug("collectTx\t" + tx);

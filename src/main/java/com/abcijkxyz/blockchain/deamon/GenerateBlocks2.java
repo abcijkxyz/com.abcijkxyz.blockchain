@@ -61,10 +61,18 @@ public class GenerateBlocks2 {
 	@Autowired
 	private SmartVM smartVM;
 
-	@Scheduled(fixedDelay =    4000)
+	@Scheduled(fixedDelay = 4000)
 //	@Scheduled(fixedRate = 4000) // 不包含运行时间
 	@Transactional
 	public void generateBlocks2() {
+
+		Long total = spentInfoMapper.getTotalTxOutputs();
+		log.info("Verification getTotalTxOutputs  :{}", total);
+		if (total != 110_000_000) { //100_100_000
+			log.error("test error");
+			System.exit(0);
+		}
+
 		List<TxData> list = txDataMapper.getFirst100TxQueue();
 
 		if (list != null && list.size() > 0) {
@@ -78,7 +86,6 @@ public class GenerateBlocks2 {
 		// TODO 交易分组
 		Map<Integer, List<TxData>> groupMap = groupTxs(list);
 
-		log.info("Total number of groupMap     executed: {}", groupMap.size());
 		Long height = 0L;
 		String prevBlockHash = ByteUtils.ZERO_HASH;
 
@@ -92,6 +99,7 @@ public class GenerateBlocks2 {
 		//
 		// // TODO 执行交易里面的合约逻辑
 		// // TODO 并行分组执行交易
+		log.info("Total number of groupMap     executed: {}", groupMap.size());
 		List<Transaction> txList = execute(groupMap, height);
 		if (txList.size() > 0) {
 			List<String> qHashs = new ArrayList<String>();
@@ -232,6 +240,8 @@ public class GenerateBlocks2 {
 						txDataMapper.delete(txData.getHash());
 					}
 					// sql= execSQL(output)
+
+					// TODO
 				}
 			}
 		} catch (Exception e) {

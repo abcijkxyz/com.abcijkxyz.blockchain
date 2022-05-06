@@ -74,6 +74,7 @@ public class SmartVM {
 					Long gasOutputValue = 1L;
 					// 收手续费账号
 					String gasOutputAddress = "9999-9999-9999-9999-9999";
+//					String gasOutputAddress = "1111-1111-1111-1111-0000";
 
 					// 有输出时候 在from的输出上减去手续费
 					Integer outputIndex = 0;
