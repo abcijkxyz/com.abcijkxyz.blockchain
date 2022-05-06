@@ -14,8 +14,8 @@ public interface BlockMapper {
 
 	@Insert("""
 
-			INSERT INTO "block" ("hash", "prevBlockHash", "height", "time", "data", "txNum", "merkleRoot", "version") 
-			VALUES(#{hash},#{prevBlockHash},#{height},#{time},#{data},#{txNum},#{merkleRoot},#{version})
+			INSERT INTO "block" ("height","txNum","hash","prevBlockHash","time","data","merkleRoot","version") 
+			VALUES(#{height},#{txNum},#{hash},#{prevBlockHash},#{time},#{data},#{merkleRoot},#{version})
 
 			""")
 	int insert(Block block);

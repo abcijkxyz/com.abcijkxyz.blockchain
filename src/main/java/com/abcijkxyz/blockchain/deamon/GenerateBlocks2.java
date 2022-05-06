@@ -83,6 +83,8 @@ public class GenerateBlocks2 {
 
 	private void packagingBlock(List<TxData> list) {
 
+		log.info("Total number of TxData           list: {}", list.size());
+
 		// TODO 交易分组
 		Map<Integer, List<TxData>> groupMap = groupTxs(list);
 
