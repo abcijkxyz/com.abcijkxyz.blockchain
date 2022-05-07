@@ -15,7 +15,7 @@ public interface AccountMapper {
 
 	@Insert("""
 
-			INSERT INTO "account" ("address", "locked", "ecosystem", "memberName", "imageId", "memberInfo", "createDate") 
+			INSERT INTO "account" ("address", "locked", "ecosystem", "memberName", "imageId", "memberInfo", "createDate")
 			VALUES(#{address},#{locked},#{ecosystem},#{memberName},#{imageId},#{memberInfo},#{createDate})
 
 			""")

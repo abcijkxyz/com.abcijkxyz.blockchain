@@ -135,7 +135,8 @@ public interface SpentInfoMapper {
 	@Select("""
 
 			SELECT "outputAddress",SUM ("outputValue") AS "outputValue" FROM spent_info
-			WHERE "inputTxHash" IS NULL    GROUP BY "outputAddress"  HAVING SUM ("outputValue") >1000 ORDER BY  "outputValue"  DESC LIMIT 500
+			WHERE "inputTxHash" IS NULL    GROUP BY "outputAddress"  HAVING SUM ("outputValue") >1000
+			ORDER BY  "outputValue"  DESC LIMIT 500
 
 			""")
 	List<SpentInfo> getMaxManyTxOutputs();
@@ -151,7 +152,6 @@ public interface SpentInfoMapper {
 			""")
 	List<SpentInfo> getMinManyTxOutputs();
 
-	
 	// 总余额
 	@Select("""
 

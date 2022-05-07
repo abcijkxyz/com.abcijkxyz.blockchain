@@ -5,8 +5,6 @@ import java.util.List;
 import com.abcijkxyz.blockchain.client.TxData;
 import com.abcijkxyz.blockchain.data.SpentInfo;
 import com.abcijkxyz.blockchain.data.Transaction;
-import com.abcijkxyz.blockchain.data.TxInput;
-import com.abcijkxyz.blockchain.data.TxOutput;
 
 import lombok.Data;
 

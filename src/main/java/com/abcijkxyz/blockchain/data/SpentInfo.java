@@ -6,17 +6,17 @@ import lombok.Data;
 public class SpentInfo {
 //	INSERT INTO "public"."spent_info"("inputTxHash", "inputIndex", "inputPublicKey", "outputTxHash", "outputIndex", "outputAddress", "outputValue", "scene", "ecosystem", "contract", "height", "asset") VALUES ('1', NULL, NULL, '1', 1, '1', NULL, NULL, NULL, NULL, 1, NULL);
 
-	// -------------  输出余额 ，用户账户余额  ---------------------------------------
+	// ------------- 输出余额 ，用户账户余额 ---------------------------------------
 	private Long height;
 
 	// 输出花费给指定的的用户
 	private String outputAddress;
 
 	// 输出的余额
-	private Long outputValue;  
-	//9000000000000000000L;
-	//9223372036854775807L Long.MAX_VALUE
-	
+	private Long outputValue;
+	// 9000000000000000000L;
+	// 9223372036854775807L Long.MAX_VALUE
+
 	// 输出花费的交易
 	private String outputTxHash;
 
@@ -40,9 +40,8 @@ public class SpentInfo {
 	// 锁定场景
 	// TODO 锁定的流程？
 
-	
-	// -------------  花费余额，已使用标志   ---------------------------------------
-	
+	// ------------- 花费余额，已使用标志 ---------------------------------------
+
 	// 产生该输入的交易哈希
 	private String inputTxHash;
 

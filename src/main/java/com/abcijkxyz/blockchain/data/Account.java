@@ -19,7 +19,7 @@ public class Account {
 	private Long imageId;
 	private String memberInfo;
 	private Date createDate;
-	
+
 	public Account(String address) {
 		this.address = address;
 	}

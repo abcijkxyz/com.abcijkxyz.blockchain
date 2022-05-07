@@ -3,6 +3,8 @@ package com.abcijkxyz.blockchain.function;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.util.Assert;
+
 import com.abcijkxyz.blockchain.data.SpentInfo;
 import com.abcijkxyz.blockchain.util.Context;
 import com.abcijkxyz.blockchain.util.ContextUtil;
@@ -23,7 +25,7 @@ public class TransferHelper {
 	public static Boolean multipleTransfer(List<TransferMsg> transferMsgs) {
 		Context context = ContextUtil.getContext();
 		Boolean flag = true;
-		
+
 		// TODO 运行失败惩罚机制
 		if (context != null) {
 			List<SpentInfo> txInput = context.getTxInputs();
@@ -56,7 +58,7 @@ public class TransferHelper {
 			}
 
 			// TODO 运行失败惩罚机制
-//		Assert.isTrue(flag, "转账余额不足");
+			Assert.isTrue(flag, "转账余额不足:" + from);
 
 			// 剩余余额的找零输出
 			if (totalAmount > 0) {

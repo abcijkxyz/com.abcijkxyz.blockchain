@@ -25,7 +25,7 @@ public class Transfer implements SmartContract {
 		if (bool) {
 			return "Transfer OK";
 		} else {
-			
+
 			return "Transfer ERROR";
 		}
 

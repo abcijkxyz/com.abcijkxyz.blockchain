@@ -19,9 +19,9 @@ public interface TransactionMapper {
 	int insert(Transaction transaction);
 
 	@Delete("""
-			
-			DELETE FROM "transaction" 
-			
+
+			DELETE FROM "transaction"
+
 			""")
 	int deleteAll();
 

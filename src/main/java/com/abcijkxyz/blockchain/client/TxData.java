@@ -41,8 +41,8 @@ public class TxData {
 					.packLong(amount)//
 					.packLong(timestamp);
 			packer.close();
-			byte[] data=packer.toByteArray();
-			this.data = Hex.encodeHexString(data) ;
+			byte[] data = packer.toByteArray();
+			this.data = Hex.encodeHexString(data);
 			this.hash = Hash256Util.hash256(data);
 		} catch (IOException e) {
 			e.printStackTrace();

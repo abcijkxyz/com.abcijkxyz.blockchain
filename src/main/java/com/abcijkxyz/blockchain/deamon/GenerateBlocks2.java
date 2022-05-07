@@ -43,6 +43,7 @@ import lombok.extern.slf4j.Slf4j;
 public class GenerateBlocks2 {
 	private final static String UNKNOWN_TABLE = "UNKNOWN_TABLE";
 
+//	private ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 	@Autowired
 	private TxDataMapper txDataMapper;
 
@@ -68,7 +69,7 @@ public class GenerateBlocks2 {
 
 		Long total = spentInfoMapper.getTotalTxOutputs();
 		log.info("Verification getTotalTxOutputs  :{}", total);
-		if (total != 110_000_000) { //100_100_000
+		if (total != 110_000_000) { // 100_100_000
 			log.error("test error");
 			System.exit(0);
 		}
@@ -82,6 +83,10 @@ public class GenerateBlocks2 {
 	}
 
 	private void packagingBlock(List<TxData> list) {
+		List<String> qHashs = new ArrayList<String>();
+		for (TxData transaction : list) {
+			qHashs.add(transaction.getHash());
+		}
 
 		log.info("Total number of TxData           list: {}", list.size());
 
@@ -104,10 +109,10 @@ public class GenerateBlocks2 {
 		log.info("Total number of groupMap     executed: {}", groupMap.size());
 		List<Transaction> txList = execute(groupMap, height);
 		if (txList.size() > 0) {
-			List<String> qHashs = new ArrayList<String>();
-			for (Transaction transaction : txList) {
-				qHashs.add(transaction.getTxData().getHash());
-			}
+//			List<String> qHashs = new ArrayList<String>();
+//			for (Transaction transaction : txList) {
+//				qHashs.add(transaction.getTxData().getHash());
+//			}
 
 			txDataMapper.deleteByHashs(qHashs);
 
@@ -125,8 +130,10 @@ public class GenerateBlocks2 {
 	 */
 	private ArrayList<Transaction> execute(Map<Integer, List<TxData>> groupMap, Long height) {
 		int cpus = Runtime.getRuntime().availableProcessors();
-		ExecutorService threadPool = new ThreadPoolExecutor(2, cpus, 10L, TimeUnit.MILLISECONDS, new LinkedBlockingDeque<>(10000), Executors.defaultThreadFactory(),
-				new ThreadPoolExecutor.DiscardPolicy());
+		ExecutorService threadPool = new ThreadPoolExecutor(cpus, cpus * 10, 10L, TimeUnit.MILLISECONDS, new LinkedBlockingDeque<>(10000), Executors.defaultThreadFactory(),
+				new ThreadPoolExecutor.DiscardPolicy()); // 1450
+//		ExecutorService threadPool = Executors.newFixedThreadPool(3000);  //1150
+//		ExecutorService threadPool = Executors.newSingleThreadExecutor();  // 1050
 		LinkedBlockingQueue<Transaction> collectData = new LinkedBlockingQueue<>();// Collect all executed data
 		long start = System.currentTimeMillis();
 		while (!groupMap.isEmpty()) {
@@ -158,19 +165,26 @@ public class GenerateBlocks2 {
 			}
 			// System.out.println("--------------Execute transactions in parallel-----------------");
 
+			log.info("Total number of transactions     size: {}", size);
 			CountDownLatch countDownLatch = new CountDownLatch(size);
 			excuGroupMap.forEach((key, value) -> {
 				threadPool.execute(() -> {
+//					log.debug(Thread.currentThread().getId() + "\t " + Thread.currentThread().getName());
 					for (TxData txData : value) {
+
 						try {
 							if ((System.currentTimeMillis() - start) <= 2000) {
 								// TimeUnit.MILLISECONDS.sleep(10);
 								// TODO execute transaction
 
+//							TestCallabel testCallabel = new TestCallabel(txDataMapper, accountMapper, spentInfoMapper, blockMapper, transactionMapper, smartVM, txData, height);
+//							Future<Transaction> future = threadPool.submit(testCallabel);
+//							Transaction tx = future.get(100, TimeUnit.MILLISECONDS);
 								Transaction tx = callContract(txData, height);
 								if (tx != null) {
 									collectData.add(tx);
 								}
+
 								// log.info("transaction group {}, transaction address: {}", key, tx);
 							}
 							countDownLatch.countDown();
@@ -182,6 +196,7 @@ public class GenerateBlocks2 {
 			});
 			try {
 				countDownLatch.await();
+
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} finally {
@@ -195,7 +210,7 @@ public class GenerateBlocks2 {
 	}
 
 	// TODO 模拟虚拟机 执行 合约 Contract
-	private Transaction callContract(TxData txData, Long height) {
+	private synchronized Transaction callContract(TxData txData, Long height) {
 		Transaction transaction = null;
 
 		try {

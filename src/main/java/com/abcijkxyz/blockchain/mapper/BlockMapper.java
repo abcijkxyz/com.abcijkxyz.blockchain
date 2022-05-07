@@ -11,10 +11,9 @@ import com.abcijkxyz.blockchain.data.Block;
 public interface BlockMapper {
 //	INSERT INTO "public"."block"("hash", "prevBlockHash", "height", "time", "data", "txNum", "merkleRoot", "version") VALUES ('1', NULL, 1, NULL, NULL, NULL, NULL, NULL);
 
-
 	@Insert("""
 
-			INSERT INTO "block" ("height","txNum","hash","prevBlockHash","time","data","merkleRoot","version") 
+			INSERT INTO "block" ("height","txNum","hash","prevBlockHash","time","data","merkleRoot","version")
 			VALUES(#{height},#{txNum},#{hash},#{prevBlockHash},#{time},#{data},#{merkleRoot},#{version})
 
 			""")

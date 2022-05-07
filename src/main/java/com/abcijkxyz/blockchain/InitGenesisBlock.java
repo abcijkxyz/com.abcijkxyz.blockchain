@@ -60,12 +60,12 @@ public class InitGenesisBlock implements CommandLineRunner {
 
 //				String result = smartVM.callContract(txData, new Example1());
 				String result = smartVM.callContract(txData, new Example1("test comment"));
-		//		System.out.println("Example1:" + result);
+				// System.out.println("Example1:" + result);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 
-		//	System.out.println("--------------");
+			// System.out.println("--------------");
 			try {
 				// Example2
 
@@ -78,11 +78,11 @@ public class InitGenesisBlock implements CommandLineRunner {
 				TxData txData = new TxData(contract, from, to, amount, timestamp);
 
 				String result = smartVM.callContract(txData, new Example2());
-		//		System.out.println("Example2:" + result);
+				// System.out.println("Example2:" + result);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		//	System.out.println("--------------");
+			// System.out.println("--------------");
 
 			try {
 				// Coinbase
@@ -96,11 +96,11 @@ public class InitGenesisBlock implements CommandLineRunner {
 				TxData txData = new TxData(contract, from, to, amount, timestamp);
 
 				String result = smartVM.callContract(txData, new Coinbase());
-	//			System.out.println("Coinbase:" + result);
+				// System.out.println("Coinbase:" + result);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		//	System.out.println("--------------");
+			// System.out.println("--------------");
 
 			try {
 				// Transfer
@@ -112,11 +112,11 @@ public class InitGenesisBlock implements CommandLineRunner {
 				Long timestamp = System.currentTimeMillis();
 				TxData txData = new TxData(contract, from, to, amount, timestamp);
 				String result = smartVM.callContract(txData, new Transfer(from, amount));
-	//			System.out.println("Transfer:" + result);
+				// System.out.println("Transfer:" + result);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		//	System.out.println("--------------");
+			// System.out.println("--------------");
 
 		};
 	}
@@ -136,7 +136,7 @@ public class InitGenesisBlock implements CommandLineRunner {
 			{
 				accountMapper.deleteAll();
 				// Account
-		//		System.out.println("account\t" + account);
+				// System.out.println("account\t" + account);
 				accountMapper.insertOnlyAddress(account);
 			}
 
@@ -190,11 +190,11 @@ public class InitGenesisBlock implements CommandLineRunner {
 				Long timestamp = System.currentTimeMillis();
 				TxData txData = new TxData(contract, from, to, amount, timestamp);
 				String result = smartVM.callContract(txData, new Transfer(to, amount));
-	//			System.out.println("Transfer:" + result);
+				// System.out.println("Transfer:" + result);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-	//		System.out.println("--------------");
+			// System.out.println("--------------");
 			try {
 				// Example1
 				String contract = "Example1";
@@ -205,11 +205,11 @@ public class InitGenesisBlock implements CommandLineRunner {
 				TxData txData = new TxData(contract, from, to, amount, timestamp);
 //			String result = smartVM.callContract(txData, new Example1());
 				String result = smartVM.callContract(txData, new Example1("test comment"));
-		//		System.out.println("Example1:" + result);
+				// System.out.println("Example1:" + result);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		//	System.out.println("--------------");
+			// System.out.println("--------------");
 		};
 	}
 }

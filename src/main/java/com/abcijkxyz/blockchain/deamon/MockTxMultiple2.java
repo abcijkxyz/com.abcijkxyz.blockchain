@@ -36,7 +36,7 @@ public class MockTxMultiple2 {
 	/**
 	 * Mock real-time transactions
 	 */
-	@Scheduled(fixedRate = 2000)
+	@Scheduled(fixedRate = 500)
 	public void mockTx() {
 //		log.debug("start mockTx");
 		try {

@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class TransferMsg {
-    private String outputAddress;
-    private Long outputValue;
+	private String outputAddress;
+	private Long outputValue;
 }

@@ -51,9 +51,6 @@ public interface TxDataMapper {
 				DELETE FROM "tx_data" WHERE hash = #{hash}
 			""")
 	void delete(String hash);
-	
-	
-	
 
 	@Select("""
 

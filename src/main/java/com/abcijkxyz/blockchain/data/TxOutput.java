@@ -39,6 +39,4 @@ public class TxOutput {
 		this.height = height;
 	}
 
-	
-	
 }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import com.abcijkxyz.blockchain.client.TxData;
 import com.abcijkxyz.blockchain.data.SpentInfo;
@@ -29,7 +30,7 @@ public class SmartVM {
 				// } else {
 				// System.out.println("SmartContract...before...参数验证 conditions ERROR");
 				// }
-				// Assert.isTrue(bool, contract.getClass().getSimpleName() + " 参数验证方法 conditions() 返回值必须为true");
+//				 Assert.isTrue(bool, contract.getClass().getSimpleName() + " 参数验证方法 conditions() 返回值必须为true");
 
 				// System.out.println("SmartContract...before...准备输入 TxInput");
 
@@ -40,7 +41,7 @@ public class SmartVM {
 
 				// System.out.println("TxInput:\n" + pretty);
 				// TODO 运行失败惩罚机制
-				// Assert.isTrue(txInputs != null && txInputs.size() > 0, "txInputs 不为空");
+				Assert.isTrue(txInputs != null && txInputs.size() > 0, "txInputs 不为空: " + from + "\t" + txInputs);
 
 				if (txInputs != null && txInputs.size() > 0) {
 					Context context = new Context();
@@ -110,7 +111,7 @@ public class SmartVM {
 						flag = false;
 					}
 					// TODO 运行失败惩罚机制
-					// Assert.isTrue(flag, "扣减手续费余额不足");
+					Assert.isTrue(flag, "扣减手续费余额不足:" + from);
 
 					// 剩余余额的找零输出
 					if (totalAmount > 0) {
