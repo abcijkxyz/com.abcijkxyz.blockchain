@@ -1,21 +1,18 @@
-package com.abcijkxyz.blockchain.mock;
+package com.abcijkxyz.blockchain.deamon;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.UUID;
 
-import org.apache.commons.codec.binary.Hex;
-//import org.apache.kafka.clients.admin.NewTopic;
-import org.msgpack.core.MessageBufferPacker;
-import org.msgpack.core.MessagePack;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 //import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
+import com.abcijkxyz.blockchain.client.TxData;
 import com.abcijkxyz.blockchain.data.SpentInfo;
 import com.abcijkxyz.blockchain.mapper.AccountMapper;
 import com.abcijkxyz.blockchain.mapper.SpentInfoMapper;
+import com.abcijkxyz.blockchain.mapper.TxDataMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,25 +27,10 @@ public class MockTxSingle {
 	@Autowired
 	private SpentInfoMapper spentInfoMapper;
 
-//	@Autowired
-//	private BlockMapper blockMapper;
-
-//	@Autowired
-//	private TransactionMapper transactionMapper;
+	@Autowired
+	private TxDataMapper queueMapper;
 
 	private static final String TOPIC = "MockTransaction";
-//	@Autowired
-//	private KafkaTemplate<String, String> kafkaTemplate;
-//
-//	public void sendTx(String message) {
-////		log.debug(message);
-//		this.kafkaTemplate.send(TOPIC, message);
-//	}
-//
-//	@Bean
-//	public NewTopic createTopic() {
-//		return new NewTopic(TOPIC, 3, (short) 1);
-//	}
 
 	/**
 	 * Mock real-time transactions
@@ -60,7 +42,7 @@ public class MockTxSingle {
 			SpentInfo maxOutput = spentInfoMapper.getMaxOneTxOutputs();
 			if (maxOutput != null) {
 				String from = maxOutput.getOutputAddress();
-//				Long amount = maxOutput.getOutputValue();
+				Long amount = 1L;// maxOutput.getOutputValue();
 
 				int accountNum = accountMapper.countAll();
 				String to = null;
@@ -72,19 +54,10 @@ public class MockTxSingle {
 					to = minOutput.getOutputAddress();
 				}
 
-//				Random random = new Random();
-				MessageBufferPacker packer = MessagePack.newDefaultBufferPacker();
-				packer.packString("Transfer")//
-						.packString(from)//
-						.packString(to)//
-						.packLong(1L)//
-						.packLong(new Date().getTime());
-				packer.close();
-				String tx = Hex.encodeHexString(packer.toByteArray());
-//				sendTx(tx);
+				queueMapper.insert(new TxData("Transfer", from, to, amount, new Date().getTime()));
 
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 

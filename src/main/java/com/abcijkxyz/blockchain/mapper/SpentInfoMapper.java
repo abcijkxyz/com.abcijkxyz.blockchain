@@ -136,7 +136,7 @@ public interface SpentInfoMapper {
 
 			SELECT "outputAddress",SUM ("outputValue") AS "outputValue" FROM spent_info
 			WHERE "inputTxHash" IS NULL    GROUP BY "outputAddress"  HAVING SUM ("outputValue") >1000
-			ORDER BY  "outputValue"  DESC LIMIT 500
+			ORDER BY  "outputValue"  DESC LIMIT 3000
 
 			""")
 	List<SpentInfo> getMaxManyTxOutputs();
@@ -147,7 +147,7 @@ public interface SpentInfoMapper {
 			FROM "account"
 			LEFT JOIN ( SELECT "outputAddress", SUM ( "outputValue" ) AS "outputValue" FROM spent_info
 			WHERE "inputTxHash" IS NULL GROUP BY "outputAddress" ) outputs ON outputs."outputAddress" = "account".address
-			ORDER BY "outputValue" ASC LIMIT 500
+			ORDER BY "outputValue" ASC LIMIT 3000
 
 			""")
 	List<SpentInfo> getMinManyTxOutputs();

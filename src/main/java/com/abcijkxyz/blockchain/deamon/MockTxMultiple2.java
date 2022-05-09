@@ -36,21 +36,21 @@ public class MockTxMultiple2 {
 	/**
 	 * Mock real-time transactions
 	 */
-	@Scheduled(fixedRate = 500)
+	@Scheduled(fixedRate = 1000)
 	public void mockTx() {
 //		log.debug("start mockTx");
 		try {
 			int queueNum = queueMapper.countAll();
 			// 保持一定量的交易，不让账号转超过账上的钱
-			if (queueNum > 10000) {
+			if (queueNum >= 6000) {
 				return;
 			}
 			List<SpentInfo> maxOutputs = spentInfoMapper.getMaxManyTxOutputs();
 			List<SpentInfo> minOutputs = spentInfoMapper.getMinManyTxOutputs();
 			int accountNum = accountMapper.countAll();
 			// 初始化一批账户
-			if (accountNum < 1000) {
-				for (int i = accountNum; i <= 1000; i++) {
+			if (accountNum < 5000) {
+				for (int i = accountNum; i <= 5000; i++) {
 					String address = "1111-1111-1111-1111-" + String.format("%04d", i);
 					accountMapper.insertOnlyAddress(address);
 					List<SpentInfo> outputs = new ArrayList<SpentInfo>();
@@ -77,7 +77,7 @@ public class MockTxMultiple2 {
 //						amount = 1000L;
 //					}
 
-					if (accountNum < 2000) {
+					if (accountNum < 10000) {
 
 						to = UUID.randomUUID().toString();
 						accountMapper.insertOnlyAddress(to);

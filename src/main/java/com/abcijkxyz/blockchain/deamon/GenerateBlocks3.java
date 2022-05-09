@@ -40,7 +40,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-public class GenerateBlocks2 {
+public class GenerateBlocks3 {
 	private final static String UNKNOWN_TABLE = "UNKNOWN_TABLE";
 
 //	private ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
@@ -69,7 +69,7 @@ public class GenerateBlocks2 {
 
 		Long total = spentInfoMapper.getTotalTxOutputs();
 		log.info("Verification getTotalTxOutputs  :{}", total);
-		if (total != 110_000_000) { // 100_100_000
+		if (total != 150000000) { // 100_100_000
 			log.error("test error");
 			System.exit(0);
 		}
@@ -168,8 +168,12 @@ public class GenerateBlocks2 {
 			log.info("Total number of transactions     size: {}", size);
 			CountDownLatch countDownLatch = new CountDownLatch(size);
 			excuGroupMap.forEach((key, value) -> {
+				
+				
 				threadPool.execute(() -> {
-//					log.debug(Thread.currentThread().getId() + "\t " + Thread.currentThread().getName());
+
+//					long time = System.currentTimeMillis();
+//					log.debug("start \t group tx size：" + value.size() + "\t" + time);
 					for (TxData txData : value) {
 
 						try {
@@ -177,15 +181,13 @@ public class GenerateBlocks2 {
 								// TimeUnit.MILLISECONDS.sleep(10);
 								// TODO execute transaction
 
-//							TestCallabel testCallabel = new TestCallabel(txDataMapper, accountMapper, spentInfoMapper, blockMapper, transactionMapper, smartVM, txData, height);
-//							Future<Transaction> future = threadPool.submit(testCallabel);
-//							Transaction tx = future.get(100, TimeUnit.MILLISECONDS);
 								Transaction tx = callContract(txData, height);
 								if (tx != null) {
 									collectData.add(tx);
 								}
 
 								// log.info("transaction group {}, transaction address: {}", key, tx);
+//								log.debug("end \t group tx size：" + value.size() + "\t" + (System.currentTimeMillis() - start));
 							}
 							countDownLatch.countDown();
 						} catch (Exception e) {
@@ -193,6 +195,9 @@ public class GenerateBlocks2 {
 						}
 					}
 				});
+				
+				
+
 			});
 			try {
 				countDownLatch.await();
