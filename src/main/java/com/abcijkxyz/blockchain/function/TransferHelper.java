@@ -2,7 +2,7 @@ package com.abcijkxyz.blockchain.function;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
+import java.util.List;
 
 import org.springframework.util.Assert;
 
@@ -29,11 +29,11 @@ public class TransferHelper {
 
 		// TODO 运行失败惩罚机制
 		if (context != null) {
-			Vector<SpentInfo> txInput = context.getTxInputs();
+			List<SpentInfo> txInput = context.getTxInputs();
 			String from = context.getFrom();
 
 			// System.out.println("multipleTransfer 获得虚拟机上下文参数");
-			Vector<SpentInfo> txOutputs = new Vector<SpentInfo>();
+			List<SpentInfo> txOutputs = new ArrayList<SpentInfo>();
 
 			Long totalAmount = 0L;
 			for (SpentInfo spentInfo : txInput) {

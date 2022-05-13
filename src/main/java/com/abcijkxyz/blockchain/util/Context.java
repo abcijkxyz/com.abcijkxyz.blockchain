@@ -18,9 +18,9 @@ public class Context {
 	private String contract;
 	private TxData txData;
 
-	private Vector<SpentInfo> txInputs;
+	private List<SpentInfo> txInputs;
 
-	private Vector<SpentInfo> txOutputs;
+	private List<SpentInfo> txOutputs;
 
 	private List<Transaction> transactions;
 

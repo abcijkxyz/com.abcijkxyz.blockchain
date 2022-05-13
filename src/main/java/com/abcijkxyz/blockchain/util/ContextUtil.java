@@ -1,6 +1,7 @@
 package com.abcijkxyz.blockchain.util;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -10,7 +11,7 @@ import com.alibaba.fastjson.JSONObject;
 public class ContextUtil {
 	public static ThreadLocal<Context> context = new ThreadLocal<Context>();
 
-	public static ConcurrentMap<String, Vector<SpentInfo>> outputsMap = new ConcurrentHashMap<String, Vector<SpentInfo>>();
+	public static ConcurrentMap<String, List<SpentInfo>> outputsMap = new ConcurrentHashMap<String, List<SpentInfo>>();
 
 	public static Context getContext() {
 		return context.get();
@@ -20,9 +21,9 @@ public class ContextUtil {
 		ContextUtil.context.set(context);
 	}
 
-	public static Vector<SpentInfo> getOutputs(String address) {
-		Vector<SpentInfo> list = outputsMap.get(address);
-		Vector<SpentInfo> list2 = new Vector<SpentInfo>();
+	public static List<SpentInfo> getOutputs(String address) {
+		List<SpentInfo> list = outputsMap.get(address);
+		List<SpentInfo> list2 = new ArrayList<SpentInfo>();
 		if (list != null) {
 			int inputIndex = 0;
 			for (int i = 0; i < list.size(); i++) {
@@ -36,17 +37,17 @@ public class ContextUtil {
 		return list2;
 	}
 
-	public static Vector<SpentInfo> getAllOutputs(String address) {
-		Vector<SpentInfo> list = outputsMap.get(address);
+	public static List<SpentInfo> getAllOutputs(String address) {
+		List<SpentInfo> list = outputsMap.get(address);
 		 
 		return list;
 	}
-	public static void putOutputs(Vector<SpentInfo> outputs) {
+	public static void putOutputs(List<SpentInfo> outputs) {
 		if (outputs != null) {
 			for (SpentInfo txOutput : outputs) {
-				Vector<SpentInfo> spentInfos = outputsMap.get(txOutput.getOutputAddress());
+				List<SpentInfo> spentInfos = outputsMap.get(txOutput.getOutputAddress());
 				if (spentInfos == null) {
-					spentInfos = new Vector<SpentInfo>();
+					spentInfos = new ArrayList<SpentInfo>();
 				}
 				spentInfos.add(txOutput);
 				putOutputs(txOutput.getOutputAddress(), spentInfos);
@@ -54,7 +55,7 @@ public class ContextUtil {
 		}
 	}
 
-	public static void putOutputs(String address, Vector<SpentInfo> outputs) {
+	public static void putOutputs(String address, List<SpentInfo> outputs) {
 		outputsMap.put(address, outputs);
 	}
 
@@ -62,8 +63,8 @@ public class ContextUtil {
 		outputsMap.keySet().forEach(outputsMap::remove);
 	}
 
-	public static Vector<SpentInfo> getAllOutputs() {
-		Vector<SpentInfo> spentInfos = new Vector<SpentInfo>();
+	public static List<SpentInfo> getAllOutputs() {
+		List<SpentInfo> spentInfos = new ArrayList<SpentInfo>();
 		outputsMap.keySet().forEach(k -> {
 			spentInfos.addAll(outputsMap.get(k));
 		});

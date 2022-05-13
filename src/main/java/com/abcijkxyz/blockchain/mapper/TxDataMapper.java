@@ -30,7 +30,7 @@ public interface TxDataMapper {
 
 	@Select("""
 
-			SELECT hash,contract,"from","to",amount,"timestamp" FROM "tx_data" ORDER BY "timestamp" asc LIMIT 10000
+			SELECT hash,contract,"from","to",amount,"timestamp" FROM "tx_data" ORDER BY "timestamp" asc LIMIT 15000
 
 			""")
 	List<TxData> getFirst100TxQueue();

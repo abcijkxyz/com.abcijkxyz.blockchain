@@ -102,7 +102,7 @@ public interface SpentInfoMapper {
 				tr."time" ASC
 			</script>
 			""")
-	Vector<SpentInfo> findTxOutputs(List<String> list);
+	List<SpentInfo> findTxOutputs(List<String> list);
 
 	// 可花费的输出
 	@Select("""

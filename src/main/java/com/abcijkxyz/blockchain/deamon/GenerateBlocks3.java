@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.Vector;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -94,7 +94,7 @@ public class GenerateBlocks3 {
 
 		// System.out.println("qAddress"+qAddress);
 
-		Vector<SpentInfo> txInputs = spentInfoMapper.findTxOutputs(qAddress);
+		List<SpentInfo> txInputs = spentInfoMapper.findTxOutputs(qAddress);
 		ContextUtil.putOutputs(txInputs);
 
 		log.info("Total number of TxData           list: {}", list.size());
@@ -284,8 +284,8 @@ public class GenerateBlocks3 {
 				Context context = ContextUtil.getContext();
 				// TODO 运行失败惩罚机制
 				if (context != null) {
-					Vector<SpentInfo> txInputs_ctx = context.getTxInputs();
-					Vector<SpentInfo> txOutputs_ctx = context.getTxOutputs();
+					List<SpentInfo> txInputs_ctx = context.getTxInputs();
+					List<SpentInfo> txOutputs_ctx = context.getTxOutputs();
 
 					if (txInputs_ctx != null && txInputs_ctx.size() > 0 && txOutputs_ctx != null && txOutputs_ctx.size() > 0) {
 						transaction = new Transaction(height, contract, from, System.currentTimeMillis(), txData, txInputs_ctx, txOutputs_ctx);
@@ -317,12 +317,12 @@ public class GenerateBlocks3 {
 	}
 
 	// insertTxOutputs
-	public void insertTxOutputs2(String outputTxHash, Long height, Vector<SpentInfo> txOutputs_ctx) {
+	public void insertTxOutputs2(String outputTxHash, Long height, List<SpentInfo> txOutputs_ctx) {
 		for (SpentInfo txOutput : txOutputs_ctx) {
 
-			Vector<SpentInfo> spentInfos = ContextUtil.getAllOutputs(txOutput.getOutputAddress());
+			List<SpentInfo> spentInfos = ContextUtil.getAllOutputs(txOutput.getOutputAddress());
 			if (spentInfos == null) {
-				spentInfos = new Vector<SpentInfo>();
+				spentInfos = new ArrayList<SpentInfo>();
 			}
 			txOutput.setOutputTxHash(outputTxHash);
 			txOutput.setHeight(height);
@@ -332,7 +332,7 @@ public class GenerateBlocks3 {
 	}
 
 	// updateTxInputs
-	private void updateTxInputs2(String inputTxHash, Vector<SpentInfo> txInputs_ctx) {
+	private void updateTxInputs2(String inputTxHash, List<SpentInfo> txInputs_ctx) {
 
 		for (SpentInfo txInput : txInputs_ctx) {
 			List<SpentInfo> spentInfos = ContextUtil.getOutputs(txInput.getOutputAddress());
@@ -354,7 +354,7 @@ public class GenerateBlocks3 {
 	}
 
 	@Deprecated
-	public void updateTxInputs(String inputTxHash, Vector<SpentInfo> txInputs) {
+	public void updateTxInputs(String inputTxHash, List<SpentInfo> txInputs) {
 		int numberBatch = 32767 / 5; // 每一次插入的最大行数
 		double number = txInputs.size() * 1.0 / numberBatch;
 		int n = ((Double) Math.ceil(number)).intValue(); // 向上取整
