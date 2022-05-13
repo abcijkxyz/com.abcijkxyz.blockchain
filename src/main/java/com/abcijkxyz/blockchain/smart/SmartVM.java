@@ -1,7 +1,6 @@
 package com.abcijkxyz.blockchain.smart;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Vector;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -35,8 +34,9 @@ public class SmartVM {
 				// System.out.println("SmartContract...before...准备输入 TxInput");
 
 				String from = txData.getFrom();
-				List<SpentInfo> txInputs = spentInfoMapper.findTxOutput(from);
-
+//				  TODO  输入 TxInput
+//				List<SpentInfo> txInputs = spentInfoMapper.findTxOutput(from);
+				Vector<SpentInfo> txInputs = ContextUtil.getOutputs(from);
 				// String pretty = JSON.toJSONString(txInputs, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteDateUseDateFormat);
 
 				// System.out.println("TxInput:\n" + pretty);
@@ -62,10 +62,10 @@ public class SmartVM {
 				Context context = ContextUtil.getContext();
 				// TODO 运行失败惩罚机制
 				if (context != null) {
-					List<SpentInfo> txOutputs_ctx = context.getTxOutputs();
-					List<SpentInfo> txInputs_ctx = context.getTxInputs();
+					Vector<SpentInfo> txOutputs_ctx = context.getTxOutputs();
+					Vector<SpentInfo> txInputs_ctx = context.getTxInputs();
 					String from = context.getFrom();
-					List<SpentInfo> txOutputs = new ArrayList<SpentInfo>();
+					Vector<SpentInfo> txOutputs = new Vector<SpentInfo>();
 					Long totalAmount = 0L;
 
 					// 余额是否充足标识

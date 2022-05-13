@@ -36,21 +36,21 @@ public class MockTxMultiple2 {
 	/**
 	 * Mock real-time transactions
 	 */
-	@Scheduled(fixedRate = 1000)
+	@Scheduled(fixedRate = 500)
 	public void mockTx() {
 //		log.debug("start mockTx");
 		try {
 			int queueNum = queueMapper.countAll();
 			// 保持一定量的交易，不让账号转超过账上的钱
-			if (queueNum >= 6000) {
+			if (queueNum >= 50000) {
 				return;
 			}
 			List<SpentInfo> maxOutputs = spentInfoMapper.getMaxManyTxOutputs();
 			List<SpentInfo> minOutputs = spentInfoMapper.getMinManyTxOutputs();
 			int accountNum = accountMapper.countAll();
 			// 初始化一批账户
-			if (accountNum < 5000) {
-				for (int i = accountNum; i <= 5000; i++) {
+			if (accountNum < 10000) {
+				for (int i = accountNum; i <= 10000; i++) {
 					String address = "1111-1111-1111-1111-" + String.format("%04d", i);
 					accountMapper.insertOnlyAddress(address);
 					List<SpentInfo> outputs = new ArrayList<SpentInfo>();
@@ -62,22 +62,22 @@ public class MockTxMultiple2 {
 					spentInfoMapper.insertTxOutputs(ByteUtils.ZERO_HASH, 0L, outputs);
 				}
 			}
-			String gasOutputAddress = "9999-9999-9999-9999-9999";
+//			String gasOutputAddress = "9999-9999-9999-9999-9999";
 			if (maxOutputs != null && minOutputs != null) {
 				for (int i = 0; i < maxOutputs.size(); i++) {
 					SpentInfo maxOutput = maxOutputs.get(i);
 					String from = maxOutput.getOutputAddress();
 					Long amount = 1L;// maxOutput.getOutputValue();
 					String to = null;
-					if (gasOutputAddress.equals(from)) {
-						continue;
-					}
+//					if (gasOutputAddress.equals(from)) {
+//						continue;
+//					}
 
 //					if (accountNum < 1000 && maxOutput.getOutputValue() > 10000L) {
 //						amount = 1000L;
 //					}
 
-					if (accountNum < 10000) {
+					if (accountNum < 30000) {
 
 						to = UUID.randomUUID().toString();
 						accountMapper.insertOnlyAddress(to);

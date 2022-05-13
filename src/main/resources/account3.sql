@@ -101,7 +101,7 @@ COMMENT ON COLUMN "public"."spent_info"."asset" IS '资产符号';
 -- ----------------------------
 INSERT INTO "public"."spent_info"
 VALUES (NULL, NULL, NULL, '0000000000000000000000000000000000000000000000000000000000000000', 0,
-        '1111-1111-1111-1111-0000', 100000000, NULL, NULL, NULL, NULL, NULL);
+        '1111-1111-1111-1111-0000', 100000000, NULL, NULL, NULL, 0, NULL);
 
 -- ----------------------------
 -- Table structure for transaction
@@ -123,10 +123,6 @@ CREATE TABLE "public"."transaction"
 COMMENT ON TABLE "public"."transaction" IS 'UTXO 打包的交易';
 
 -- ----------------------------
--- Records of transaction
--- ----------------------------
-
--- ----------------------------
 -- Table structure for tx_data
 -- ----------------------------
 DROP TABLE IF EXISTS "public"."tx_data";
@@ -144,8 +140,18 @@ CREATE TABLE "public"."tx_data"
 COMMENT ON TABLE "public"."tx_data" IS 'UTXO 接收交易 交易池';
 
 -- ----------------------------
--- Records of tx_data
+-- Table structure for tx_data_test
 -- ----------------------------
+DROP TABLE IF EXISTS "public"."tx_data_test";
+CREATE TABLE "public"."tx_data_test"
+(
+    "from"   varchar(50) COLLATE "pg_catalog"."default",
+    "to"     varchar(50) COLLATE "pg_catalog"."default",
+    "amount" int8,
+    "id"     int8 NOT NULL
+)
+;
+COMMENT ON TABLE "public"."tx_data_test" IS 'UTXO 接收交易 交易池';
 
 -- ----------------------------
 -- Uniques structure for table account
@@ -168,10 +174,20 @@ ALTER TABLE "public"."block"
 -- ----------------------------
 -- Indexes structure for table spent_info
 -- ----------------------------
+CREATE INDEX "spent_info_inputTxHash_idx" ON "public"."spent_info" USING btree (
+                                                                                "inputTxHash"
+                                                                                COLLATE "pg_catalog"."default"
+                                                                                "pg_catalog"."text_ops" ASC NULLS LAST
+    );
 CREATE INDEX "spent_info_outputAddress_idx" ON "public"."spent_info" USING btree (
                                                                                   "outputAddress"
                                                                                   COLLATE "pg_catalog"."default"
                                                                                   "pg_catalog"."text_ops" ASC NULLS LAST
+    );
+CREATE INDEX "spent_info_outputTxHash_idx" ON "public"."spent_info" USING btree (
+                                                                                 "outputTxHash"
+                                                                                 COLLATE "pg_catalog"."default"
+                                                                                 "pg_catalog"."text_ops" ASC NULLS LAST
     );
 
 -- ----------------------------
@@ -179,6 +195,13 @@ CREATE INDEX "spent_info_outputAddress_idx" ON "public"."spent_info" USING btree
 -- ----------------------------
 ALTER TABLE "public"."spent_info"
     ADD CONSTRAINT "spent_info_pkey" PRIMARY KEY ("outputTxHash", "outputAddress", "outputIndex");
+
+-- ----------------------------
+-- Indexes structure for table transaction
+-- ----------------------------
+CREATE INDEX "transaction_time_idx" ON "public"."transaction" USING btree (
+                                                                           "time" "pg_catalog"."int8_ops" ASC NULLS LAST
+    );
 
 -- ----------------------------
 -- Primary Key structure for table transaction
@@ -191,3 +214,9 @@ ALTER TABLE "public"."transaction"
 -- ----------------------------
 ALTER TABLE "public"."tx_data"
     ADD CONSTRAINT "t_tx_queue_pkey" PRIMARY KEY ("hash");
+
+-- ----------------------------
+-- Primary Key structure for table tx_data_test
+-- ----------------------------
+ALTER TABLE "public"."tx_data_test"
+    ADD CONSTRAINT "tx_data_test_pkey" PRIMARY KEY ("id");

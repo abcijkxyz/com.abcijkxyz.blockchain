@@ -1,6 +1,7 @@
 package com.abcijkxyz.blockchain.mapper;
 
 import java.util.List;
+import java.util.Vector;
 
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -17,6 +18,24 @@ public interface SpentInfoMapper {
 	// INSERT INTO "public"."spent_info"("inputTxHash", "inputIndex", "inputPublicKey", "outputTxHash", "outputIndex", "outputAddress", "outputValue", "scene", "ecosystem", "contract", "height",
 	// "asset") VALUES ('1', NULL, NULL, '1', 1, '1', NULL, NULL, NULL, NULL, 1, NULL);
 
+	@Insert("""
+			<script>
+
+			INSERT INTO "spent_info"("inputTxHash", "inputIndex", "inputPublicKey", "outputTxHash", "outputIndex", "outputAddress", "outputValue", "scene", "ecosystem", "contract", "height", "asset")
+			VALUES
+				<foreach collection="list" item="item" index="" separator=",">
+					(#{item.inputTxHash}, #{item.inputIndex}, #{item.inputPublicKey}, #{item.outputTxHash}, #{item.outputIndex}, #{item.outputAddress}, #{item.outputValue}, #{item.scene}, #{item.ecosystem}, #{item.contract}, #{item.height}, #{item.asset})
+				</foreach>
+			ON CONFLICT ("outputTxHash","outputAddress","outputIndex")
+			DO UPDATE SET "inputTxHash" = EXCLUDED."inputTxHash" , "inputIndex" = excluded."inputIndex" , "inputPublicKey" = excluded."inputPublicKey"
+				WHERE spent_info."outputTxHash" = EXCLUDED."outputTxHash"
+					AND spent_info."outputAddress" = EXCLUDED."outputAddress"
+					AND spent_info."outputIndex" = EXCLUDED."outputIndex"
+
+			</script>
+			""")
+	int insertOrUpdateTxOutputs(@Param("list") List<SpentInfo> txOutputs);
+
 	// 记录钱包地址的可用花费
 	@Insert("""
 			<script>
@@ -31,6 +50,7 @@ public interface SpentInfoMapper {
 
 			</script>
 			""")
+	@Deprecated
 	int insertTxOutputs(@Param("outputTxHash") String outputTxHash, @Param("height") Long height, @Param("list") List<SpentInfo> txOutputs);
 
 	// 更新花费使用情况
@@ -49,34 +69,40 @@ public interface SpentInfoMapper {
 
 			</script>
 						""")
+	@Deprecated
 	int updateTxInputs(@Param("inputTxHash") String inputTxHash, @Param("list") List<SpentInfo> txInputs);
 
 	// 可花费的输出
 	@Select("""
-
+			<script>
 			SELECT
-				"inputTxHash",
-				"inputIndex",
-				"inputPublicKey",
-				"outputTxHash",
-				"outputIndex",
-				"outputAddress",
-				"outputValue",
-				scene,
-				ecosystem,
-				contract,
-				height,
-				asset
+				si."inputTxHash",
+					row_number() over (PARTITION BY si."outputAddress"  order by si.height ASC,	tr."time" ASC) AS "inputIndex",
+				si."inputPublicKey",
+				si."outputTxHash",
+				si."outputIndex",
+				si."outputAddress",
+				si."outputValue",
+				si.scene,
+				si.ecosystem,
+				si.contract,
+				si.height,
+				si.asset
 			FROM
-				spent_info
-			WHERE "outputAddress" IN
-				<foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
-				  #{item}
+				spent_info si
+				LEFT JOIN "transaction" AS tr ON si."outputTxHash" = tr.hash
+			WHERE
+				"outputAddress" IN
+				<foreach collection="list" item="item" open="(" close=")" separator="," >
+					#{item}
 				</foreach>
-				 AND "inputTxHash" IS NULL AND "inputTxHash" IS NULL
-
+				AND si."inputTxHash" IS NULL
+			ORDER BY si."outputAddress",
+				si.height ASC,
+				tr."time" ASC
+			</script>
 			""")
-	List<SpentInfo> findTxOutputs(@Param("list") List<String> address);
+	Vector<SpentInfo> findTxOutputs(List<String> list);
 
 	// 可花费的输出
 	@Select("""
@@ -104,7 +130,8 @@ public interface SpentInfoMapper {
 				tr."time" ASC
 
 			""")
-	List<SpentInfo> findTxOutput(String address);
+	@Deprecated
+	List<SpentInfo> findTxOutput2(String address);
 
 	// 用来模拟交易，给其他人转账
 	@Select("""
@@ -136,7 +163,7 @@ public interface SpentInfoMapper {
 
 			SELECT "outputAddress",SUM ("outputValue") AS "outputValue" FROM spent_info
 			WHERE "inputTxHash" IS NULL    GROUP BY "outputAddress"  HAVING SUM ("outputValue") >1000
-			ORDER BY  "outputValue"  DESC LIMIT 3000
+			ORDER BY  "outputValue"  DESC LIMIT 10000
 
 			""")
 	List<SpentInfo> getMaxManyTxOutputs();
@@ -147,7 +174,7 @@ public interface SpentInfoMapper {
 			FROM "account"
 			LEFT JOIN ( SELECT "outputAddress", SUM ( "outputValue" ) AS "outputValue" FROM spent_info
 			WHERE "inputTxHash" IS NULL GROUP BY "outputAddress" ) outputs ON outputs."outputAddress" = "account".address
-			ORDER BY "outputValue" ASC LIMIT 3000
+			ORDER BY "outputValue" ASC LIMIT 10000
 
 			""")
 	List<SpentInfo> getMinManyTxOutputs();

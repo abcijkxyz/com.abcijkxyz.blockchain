@@ -1,5 +1,7 @@
 package com.abcijkxyz.blockchain.data;
 
+import java.util.Objects;
+
 import lombok.Data;
 
 @Data
@@ -50,5 +52,22 @@ public class SpentInfo {
 
 	// TODO 验证改用户？是否可去除，UTXO+账户模型，无法验证
 	private String inputPublicKey;
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SpentInfo other = (SpentInfo) obj;
+		return Objects.equals(outputAddress, other.outputAddress) && Objects.equals(outputIndex, other.outputIndex) && Objects.equals(outputTxHash, other.outputTxHash);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(outputAddress, outputIndex, outputTxHash);
+	}
 
 }

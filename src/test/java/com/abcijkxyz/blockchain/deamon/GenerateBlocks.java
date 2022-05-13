@@ -321,7 +321,7 @@ public class GenerateBlocks {
 		// }
 
 		// TODO 输入 TxInput
-		List<SpentInfo> txInputs = spentInfoMapper.findTxOutput(from);
+		List<SpentInfo> txInputs = spentInfoMapper.findTxOutput2(from);
 		if (txInputs != null) {
 //			List<TxOutput> txoutput = null;
 			switch (contract) {

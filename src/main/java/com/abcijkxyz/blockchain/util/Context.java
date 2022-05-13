@@ -1,6 +1,7 @@
 package com.abcijkxyz.blockchain.util;
 
 import java.util.List;
+import java.util.Vector;
 
 import com.abcijkxyz.blockchain.client.TxData;
 import com.abcijkxyz.blockchain.data.SpentInfo;
@@ -17,9 +18,9 @@ public class Context {
 	private String contract;
 	private TxData txData;
 
-	private List<SpentInfo> txInputs;
+	private Vector<SpentInfo> txInputs;
 
-	private List<SpentInfo> txOutputs;
+	private Vector<SpentInfo> txOutputs;
 
 	private List<Transaction> transactions;
 

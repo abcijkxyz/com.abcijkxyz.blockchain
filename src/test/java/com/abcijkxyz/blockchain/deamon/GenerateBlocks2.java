@@ -227,7 +227,7 @@ public class GenerateBlocks2 {
 			Long amount = txData.getAmount();
 			Long timestamp = txData.getTimestamp();
 			// TODO 输入 TxInput
-			List<SpentInfo> txInputs = spentInfoMapper.findTxOutput(from);
+			List<SpentInfo> txInputs = spentInfoMapper.findTxOutput2(from);
 			if (txInputs != null) {
 				// List<TxOutput> txoutput = null;
 				switch (contract) {
